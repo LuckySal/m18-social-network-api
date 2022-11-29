@@ -1,0 +1,26 @@
+{
+    "name": "m18-social-network-api",
+    "version": "1.0.0",
+    "description": "A backend api for a simple social network platform",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "seed": "node ./utils/seed.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LuckySal/m18-social-network-api.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/LuckySal/m18-social-network-api/issues"
+    },
+    "homepage": "https://github.com/LuckySal/m18-social-network-api#readme",
+    "dependencies": {
+        "date-format": "^4.0.14",
+        "express": "^4.18.2",
+        "mongoose": "^6.7.2"
+    }
+}
