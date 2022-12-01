@@ -43,9 +43,9 @@ module.exports = {
     // Update a thought
     async updateThought(req, res) {
         try {
-            Thought.findByIdAndUpdate(req.body.thoughtId, {
-                thoughtText: req.body.text,
-            });
+            const thought = await Thought.findById(req.body.thoughtId);
+            thought.thoughtText = req.body.text;
+            thought.save();
             res.json({ message: "Thought updated!", updated: true });
         } catch (err) {
             res.status(400).json(err);
