@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const format = require("date-format");
+const Thought = require("./Thought");
 
 const userSchema = new Schema(
     {
@@ -40,6 +41,16 @@ const userSchema = new Schema(
             versionKey: false,
         },
         id: false,
+    }
+);
+
+userSchema.pre(
+    "deleteOne",
+    { document: true, query: false },
+    async function () {
+        this.thoughts.forEach(async (element) => {
+            const thought = await Thought.findByIdAndDelete(element);
+        });
     }
 );
 
