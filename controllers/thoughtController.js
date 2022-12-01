@@ -54,9 +54,11 @@ module.exports = {
     // Delete a thought
     async deleteThought(req, res) {
         try {
-            const thought = await Thought.findByIdAndDelete(req.body.thoughtId);
-            const user = await User.find({ username: thought.username });
+            const thought = await Thought.findById(req.body.thoughtId);
+            console.log(thought);
+            const user = await User.findOne({ username: thought.username });
             let index = user.thoughts.indexOf(thought._id);
+            thought.delete();
             if (index >= 0) {
                 user.thoughts.splice(index, 1);
                 res.json({ message: "Thought deleted!" });
@@ -71,12 +73,14 @@ module.exports = {
     async addReaction(req, res) {
         try {
             const thought = await Thought.findById(req.params.thoughtId);
+            console.log(thought);
             thought.reactions.push({
                 reactionBody: req.body.text,
                 username: req.body.username,
             });
+            console.log(thought);
             thought.save();
-            res.json({ message: "Thought added!", updated: true });
+            res.json({ message: "Reaction added!", updated: true });
         } catch (err) {
             res.status(400).json(err);
         }
