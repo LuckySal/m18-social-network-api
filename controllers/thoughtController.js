@@ -21,14 +21,24 @@ module.exports = {
     },
     // Create a new thought
     async createThought(req, res) {
-        const newThought = new Thought(req.body);
-        newThought.save(function (err) {
-            if (err) {
-                res.status(500).json(err);
-            } else {
-                res.json(newThought);
-            }
-        });
+        try {
+            const user = User.findById(req.body.userId);
+            const newThought = new Thought({
+                username: user.username,
+                thoughtText: req.body.text,
+            });
+            user.thoughts.push(newThought._id);
+            newThought.save(function (err) {
+                if (err) {
+                    res.status(500).json(err);
+                } else {
+                    res.json(newThought);
+                }
+            });
+            user.save();
+        } catch (err) {
+            res.status(400).json(err);
+        }
     },
     // Update a thought
     async updateThought(req, res) {
@@ -44,8 +54,15 @@ module.exports = {
     // Delete a thought
     async deleteThought(req, res) {
         try {
-            Thought.findByIdAndDelete(req.body.thoughtId);
-            res.json({ message: "Thought deleted!" });
+            const thought = Thought.findByIdAndDelete(req.body.thoughtId);
+            const user = User.find({ username: thought.username });
+            let index = user.thoughts.indexOf(thought._id);
+            if (index >= 0) {
+                user.thoughts.splice(index, 1);
+                res.json({ message: "Thought deleted!" });
+            } else {
+                res.json(500).json({ message: "Something weird happened" });
+            }
         } catch (err) {
             res.status(400).json(err);
         }
