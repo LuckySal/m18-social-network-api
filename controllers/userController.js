@@ -79,12 +79,14 @@ module.exports = {
             res.status(400).json(err);
         }
     },
-    // TODO: Remove a friend from a user's friend list
+    // Remove a friend from a user's friend list
     async removeFriend(req, res) {
         try {
             const user = await User.findById(req.body.userId);
             const friend = await User.findById(req.body.friendId);
-            if (user.friends.indexOf(friend._id) >= 0) {
+            let index = user.friends.indexOf(friend._id);
+            if (index >= 0) {
+                user.friends.splice(index, 1);
                 res.json({
                     message: `User ${user._id} removed friend ${friend._id}`,
                     updated: true,
