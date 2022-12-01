@@ -63,8 +63,8 @@ module.exports = {
     // Add a friend to a user's friend list
     async addFriend(req, res) {
         try {
-            const user = await User.findById(req.body.userId);
-            const friend = await User.findById(req.body.friendId);
+            const user = await User.findById(req.params.userId);
+            const friend = await User.findById(req.params.friendId);
             if (user.friends.indexOf(friend._id) >= 0) {
                 res.json({
                     message: `User ${user._id} already has friend ${friend._id}`,
@@ -82,8 +82,8 @@ module.exports = {
     // Remove a friend from a user's friend list
     async removeFriend(req, res) {
         try {
-            const user = await User.findById(req.body.userId);
-            const friend = await User.findById(req.body.friendId);
+            const user = await User.findById(req.params.userId);
+            const friend = await User.findById(req.params.friendId);
             let index = user.friends.indexOf(friend._id);
             if (index >= 0) {
                 user.friends.splice(index, 1);
