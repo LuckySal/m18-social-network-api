@@ -22,7 +22,7 @@ module.exports = {
     // Create a new thought
     async createThought(req, res) {
         try {
-            const user = User.findById(req.body.userId);
+            const user = await User.findById(req.body.userId);
             const newThought = new Thought({
                 username: user.username,
                 thoughtText: req.body.text,
@@ -54,8 +54,8 @@ module.exports = {
     // Delete a thought
     async deleteThought(req, res) {
         try {
-            const thought = Thought.findByIdAndDelete(req.body.thoughtId);
-            const user = User.find({ username: thought.username });
+            const thought = await Thought.findByIdAndDelete(req.body.thoughtId);
+            const user = await User.find({ username: thought.username });
             let index = user.thoughts.indexOf(thought._id);
             if (index >= 0) {
                 user.thoughts.splice(index, 1);
