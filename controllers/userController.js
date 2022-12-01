@@ -2,16 +2,14 @@ const { User, Thought } = require("../models");
 
 module.exports = {
     // Get all users
-    getUsers(req, res) {
+    async getUsers(req, res) {
         User.find()
-            .select("-__v")
             .then((users) => res.json(users))
             .catch((err) => res.status(500).json(err));
     },
     // Get a user
-    getSingleUser(req, res) {
+    async getSingleUser(req, res) {
         User.findOne({ _id: req.params.userId })
-            .select("-__v")
             .then((user) =>
                 !user
                     ? res.status(404).json({ message: "No user with that ID!" })
@@ -19,8 +17,8 @@ module.exports = {
             )
             .catch((err) => res.status(500).json(err));
     },
-    // TODO: Create a new user
-    createUser(req, res) {
+    // Create a new user
+    async createUser(req, res) {
         const newUser = new User(req.body);
         newUser.save(function (err) {
             if (err) {
@@ -30,8 +28,8 @@ module.exports = {
             }
         });
     },
-    // TODO: Update a user
-    updateUser(req, res) {
+    // Update a user
+    async updateUser(req, res) {
         User.findById(req.body.userId).then((user) => {
             if (!user) {
                 res.status(404).json({ message: "No user with that ID!" });
@@ -52,8 +50,8 @@ module.exports = {
             }
         });
     },
-    // TODO: Delete a user
-    deleteUser(req, res) {
+    // Delete a user
+    async deleteUser(req, res) {
         User.deleteOne({ _id: req.body.userId }, function (err) {
             err
                 ? res.status(400).json(err)
@@ -62,8 +60,40 @@ module.exports = {
                   });
         });
     },
-    // TODO: Add a friend to a user's friend list
-    addFriend(req, res) {},
+    // Add a friend to a user's friend list
+    async addFriend(req, res) {
+        try {
+            const user = await User.findById(req.body.userId);
+            const friend = await User.findById(req.body.friendId);
+            if (user.friends.indexOf(friend._id) >= 0) {
+                res.json({
+                    message: `User ${user._id} already has friend ${friend._id}`,
+                    updated: false,
+                });
+            } else {
+                user.friends.push(friend._id);
+                user.save();
+                res.json({ message: "Friend added!", updated: true });
+            }
+        } catch (err) {
+            res.status(400).json(err);
+        }
+    },
     // TODO: Remove a friend from a user's friend list
-    removeFriend(req, res) {},
+    async removeFriend(req, res) {
+        try {
+            const user = await User.findById(req.body.userId);
+            const friend = await User.findById(req.body.friendId);
+            if (user.friends.indexOf(friend._id) >= 0) {
+                res.json({
+                    message: `User ${user._id} removed friend ${friend._id}`,
+                    updated: true,
+                });
+            } else {
+                res.json({ message: "Friend not found", updated: false });
+            }
+        } catch (err) {
+            res.sttus(400).json(err);
+        }
+    },
 };
